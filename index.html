@@ -1,21 +1,130 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-        <link rel="stylesheet" href="style.css">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Les Petits Plats</title>
-    </head>
-    <body>
-    
-        <main id="app" class="LPP-main">
-            
-            <div class="Back-filter">
-                <header><img class="Site-logo" src="logo.svg" alt=""></header>
-                <h1 class="main-title">Cherchez parmi plus de 1500 recettes du quotidien simples et délicieuses</h1>
-                <label for="searchbar"></label><input type="text" id="searchbar" placeholder="Rechercher une recette un ingrédient...">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Les Petits Plats</title>
+</head>
+<body>
+
+<main id="app" class="LPP-main">
+
+    <div class="Back-filter">
+        <header><img class="Site-logo" src="logo.svg" alt=""></header>
+        <h1 class="main-title">Cherchez parmi plus de 1500 recettes du quotidien simples et délicieuses</h1>
+        <div class="searchbar">
+            <label for="searchbar"></label><input type="text" id="searchbar"
+                                                  placeholder="Rechercher une recette un ingrédient...">
+            <button><img src="magnifying-glass.svg" alt=""></button>
+        </div>
+    </div>
+</main>
+
+<div class="page-content">
+    <nav class="filters-selectors">
+        <h3 class="assurance-title">1500 recettes</h3>
+        <ul>
+            <li class="filter-button">
+                <a>Ingrédient</a>
+                <ul>
+                    <li><label><input type="text"></label></li>
+                </ul>
+            </li>
+            <li class="filter-button">
+                <a>Appareils</a>
+                <ul>
+                    <li><label><input type="text"></label></li>
+                </ul>
+            </li>
+            <li class="filter-button">
+                <a>Ustensiles</a>
+                <ul>
+                    <li><label><input type="text"></label></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="recipes-container">
+        <div class="recipe-card">
+            <div class="recipe-card-header">
+                <img src="photos/Recette01.webp" alt="">
+                <span class="recipe-time">10 min</span>
             </div>
-        </main>
-    </body>
+            <div class="recipe-card-content">
+                <h3 class="recipe-title">Titre de la recette</h3>
+                <div class="recipe-desc">
+                    <h4 class="recipe-desc-title">Recette</h4>
+                    <p class="recipe-desc-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus laborum libero nostrum
+                        provident, saepe tenetur vel? Amet blanditiis, cumque dignissimos enim quo suscipit voluptates!
+                    </p>
+                </div>
+                <div class="recipe-ingredients">
+                    <h4 class="recipe-ingredient-title">
+                        Ingrédients
+                    </h4>
+                    <ul class="recipe-ingredients-list">
+                        <li><p>Ingredient</p><span>Quantity</span></li>
+                        <li><p>Ingredient</p><span>Quantity</span></li>
+                        <li><p>Ingredient</p><span>Quantity</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="recipe-card">
+            <div class="recipe-card-header">
+                <img src="photos/Recette01.webp" alt="">
+                <span class="recipe-time">10 min</span>
+            </div>
+            <div class="recipe-card-content">
+                <h3 class="recipe-title">Titre de la recette</h3>
+                <div class="recipe-desc">
+                    <h4 class="recipe-desc-title">Recette</h4>
+                    <p class="recipe-desc-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus laborum libero nostrum
+                        provident, saepe tenetur vel? Amet blanditiis, cumque dignissimos enim quo suscipit voluptates!
+                    </p>
+                </div>
+                <div class="recipe-ingredients">
+                    <h4 class="recipe-ingredient-title">
+                        Ingrédients
+                    </h4>
+                    <ul class="recipe-ingredients-list">
+                        <li><p>Ingredient</p><span>Quantity</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="recipe-card">
+            <div class="recipe-card-header">
+                <img src="photos/Recette01.webp" alt="">
+                <span class="recipe-time">10 min</span>
+            </div>
+            <div class="recipe-card-content">
+                <h3 class="recipe-title">Titre de la recette</h3>
+                <div class="recipe-desc">
+                    <h4 class="recipe-desc-title">Recette</h4>
+                    <p class="recipe-desc-text">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloribus laborum libero nostrum
+                        provident, saepe tenetur vel? Amet blanditiis, cumque dignissimos enim quo suscipit voluptates!
+                    </p>
+                </div>
+                <div class="recipe-ingredients">
+                    <h4 class="recipe-ingredient-title">
+                        Ingrédients
+                    </h4>
+                    <ul class="recipe-ingredients-list">
+                        <li><p>Ingredient</p><span>Quantity</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="main.js"></script>
+</body>
 </html>
