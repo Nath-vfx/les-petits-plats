@@ -149,12 +149,19 @@ ul {
     box-shadow: 0 0 8px rgba(0, 0, 0, .2);
 }
 
+.filter-button ul {
+    overflow: auto;
+    max-height: 400px;
+}
+
 .recipes-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(380px, 380px));
     column-gap: 32px;
     row-gap: 66px;
 }
+
+
 
 
 /* Navbar */
