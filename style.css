@@ -152,7 +152,7 @@ ul {
 .recipes-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(380px, 380px));
-    column-gap: 48px;
+    column-gap: 32px;
     row-gap: 66px;
 }
 
