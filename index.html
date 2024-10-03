@@ -26,27 +26,27 @@
     <nav class="filters-selectors">
         <h3 class="assurance-title">1500 recettes</h3>
         <ul>
-            <li class="filter-button ingredients">
-                <a>Ingrédient</a>
-                <ul>
-                    <li><label><input type="text"></label></li>
-                </ul>
+            <li class="filter-button">
+                <label>Ingrédient</label>
+                <select name="ingredient" id="ingredients">
+                    <option value="null">Select</option>
+                </select>
             </li>
-            <li class="filter-button appliances">
-                <a>Appareils</a>
-                <ul>
-                    <li><label><input type="text"></label></li>
-                </ul>
+            <li class="filter-button">
+                <label>Appareils</label>
+                <select name="appliance" id="appliances"></select>
             </li>
-            <li class="filter-button ustensils">
-                <a>Ustensiles</a>
-                <ul>
-                    <li><label><input type="text"></label></li>
-                </ul>
+            <li class="filter-button">
+                <label>Ustensiles</label>
+                <select name="ustensil" id="ustensils"></select>
             </li>
         </ul>
+        
     </nav>
 
+    <ul class="selected-list">
+            
+    </ul>
     <div class="recipes-container">
 
     </div>
