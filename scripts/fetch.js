@@ -1,11 +1,4 @@
-import { displaySelectedStuffs } from "./display.js";
-import {recipes} from "./recipes.js";
-
-let recipesList = recipes;
-
-export let selectedStuffs = [];
-
-export async function getAllIngredients() {
+export async function getAllIngredients(recipesList) {
     const ingredients = [];
     recipesList.forEach((recipe) => {
         recipe.ingredients.forEach((ingredient) => {
@@ -15,7 +8,7 @@ export async function getAllIngredients() {
     return ingredients;
 }
 
-export async function getAllUstensils() {
+export async function getAllUstensils(recipesList) {
     const ustensils = [];
     recipesList.forEach((recipe) => {
         recipe.ustensils.forEach((ustensil) => {
@@ -25,25 +18,10 @@ export async function getAllUstensils() {
     return ustensils;
 }
 
-export async function getAllAppliances() {
+export async function getAllAppliances(recipesList) {
     const appliances = [];
     recipesList.forEach((recipe) => {
         appliances.push(recipe.appliance.toLowerCase());
     });
     return appliances;
-}
-
-export async function getSelectedStuffs() {
-    const selector = document.querySelectorAll('select');
-
-    selector.forEach((e) => {
-        e.addEventListener('change', () => {
-            console.log(e.options[e.selectedIndex].text);
-            selectedStuffs.push(e.options[e.selectedIndex].text)
-            console.log(selectedStuffs)
-            displaySelectedStuffs(selectedStuffs);
-        })
-    })
-
-    
 }

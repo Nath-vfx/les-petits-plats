@@ -1,16 +1,13 @@
-import {recipes} from "./recipes.js";
-import { selectedStuffs } from "./fetch.js";
-
-let recipesList = recipes;
+import { selectedStuffs } from "../main.js";
 
 let listSelectedStuffs = selectedStuffs;
 
 
-export async function displayRecipes() {
+export async function displayRecipes(list) {
     const recipesContainer = document.querySelector(".recipes-container")
     let allRecipes = "";
 
-    recipesList.forEach((recipe) => {
+    list.forEach((recipe) => {
         allRecipes += `
         <div class="recipe-card">
             <div class="recipe-card-header">
@@ -38,7 +35,7 @@ export async function displayRecipes() {
             </div>
         </div>
         `
-    });
+    });    
 
     recipesContainer.innerHTML = allRecipes;
 }
@@ -57,44 +54,6 @@ export async function displayStuffs(stuffs, name) {
         `
     })
 
-    stuffsContainer.innerHTML = allStuffs;
+    stuffsContainer.innerHTML = `<option value="" selected disabled>-- Choisir --</default>` + allStuffs ;
 }
 
-export async function displaySelectedStuffs(selectedStuffs) {
-    const selectedStuffsContainer = document.querySelector('.selected-list');
-
-    const e = [...new Set(selectedStuffs)]
-
-    let allSelectedStuffs = ""
-
-    e.forEach((stuff) => {
-        allSelectedStuffs += `
-        <li class="selected-list-item">${stuff}</li>
-        `;
-    })
-
-    console.log("All selected stuffs : ",allSelectedStuffs);
-    
-
-    selectedStuffsContainer.innerHTML = allSelectedStuffs;
-    removeSelectedStuffs();
-}
-
-
-
-async function removeSelectedStuffs() {
-
-    const selectedItem = document.querySelectorAll(".selected-list-item");
-    console.log('remove stuffs : ',selectedStuffs);
-    
-    selectedItem.forEach((e) => {
-        e.addEventListener('click', () => {
-            console.log('removed !');
-            e.style.display = "none";
-            let index = listSelectedStuffs.indexOf(e);
-            listSelectedStuffs.splice(index, 1)
-            console.log('New list : ', listSelectedStuffs);
-        })
-    })
-
-}
