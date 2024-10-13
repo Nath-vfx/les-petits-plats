@@ -1,15 +1,95 @@
-import {displayStuffs, displayRecipes} from "./scripts/display.js"
-import {getAllAppliances, getAllIngredients, getAllUstensils} from "./scripts/fetch.js"
 import { recipes } from "./scripts/recipes.js";
 
 let selectedAppliances = [];
 let selectedUstensils = [];
 let selectedIngredients = [];
+let selectedStuffs = [];
 let recipesList = recipes;
+let filteredRecipes = [];
+const searchInput = document.querySelector("#searchbar");
+let searchValue = '';
 
-export let selectedStuffs = [];
+// Récupères la list des ingrédients
+function getAllIngredients(recipesList) {
+    const ingredients = [];
+    recipesList.forEach((recipe) => {
+        recipe.ingredients.forEach((ingredient) => {
+            ingredients.push(ingredient.ingredient.toLowerCase());
+        });
+    });
+    return ingredients;
+}
 
-export async function getSelectedStuffs() {
+//récupère la liste des ustensils
+function getAllUstensils(recipesList) {
+    const ustensils = [];
+    recipesList.forEach((recipe) => {
+        recipe.ustensils.forEach((ustensil) => {
+            ustensils.push(ustensil.toLowerCase());
+        });
+    });
+    return ustensils;
+}
+
+//Récupère la liste des appareils
+function getAllAppliances(recipesList) {
+    const appliances = [];
+    recipesList.forEach((recipe) => {
+        appliances.push(recipe.appliance.toLowerCase());
+    });
+    return appliances;
+}
+
+async function updateDisplayedData(list) {
+    await displayStuffs(await getAllIngredients(list), "ingredients");
+    await displayStuffs(await getAllUstensils(list), "ustensils");
+    await displayStuffs(await getAllAppliances(list), "appliances");
+    await displayRecipes(list);
+}
+
+// Affiches l'ensemble des recettes
+async function displayRecipes(list) {
+    const recipesContainer = document.querySelector(".recipes-container")
+    let allRecipes = "";
+
+    list.forEach((recipe) => {
+        allRecipes += `
+        <div class="recipe-card">
+            <div class="recipe-card-header">
+                <img src="photos/${recipe.image}" alt="">
+                <span class="recipe-time">${recipe.time} min</span>
+            </div>
+            <div class="recipe-card-content">
+                <h3 class="recipe-title">${recipe.name}</h3>
+                <div class="recipe-desc">
+                    <h4 class="recipe-desc-title">Recette</h4>
+                    <p class="recipe-desc-text">
+                        ${recipe.description}
+                    </p>
+                </div>
+                <div class="recipe-ingredients">
+                    <h4 class="recipe-ingredient-title">
+                        Ingrédients
+                    </h4>
+                    <ul class="recipe-ingredients-list">
+                        ${recipe.ingredients.map((ingredient) =>
+            `<li><p>${ingredient.ingredient}</p><span>${ingredient.quantity ? ingredient.quantity : ""} ${ingredient.unit ? ingredient.unit : ""}</span></li>`
+        ).join("")}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        `
+    });    
+
+    recipesContainer.innerHTML = allRecipes;
+}
+
+
+
+
+// Récupère les filtres séléctionné
+async function getSelectedStuffs() {
     const selector = document.querySelectorAll('select');
 
     selector.forEach((e) => {
@@ -25,7 +105,7 @@ export async function getSelectedStuffs() {
                 selectedAppliances.push(e.options[e.selectedIndex].text);
                 console.log('Selected appliances : ', selectedAppliances);
             }
-            filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances)
+            filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, searchValue)
             selectedStuffs = [
                 ...selectedAppliances.map(item => ({ type: 'Appliances', name: item })),
                 ...selectedIngredients.map(item => ({ type: 'Ingredients', name: item })),
@@ -39,47 +119,61 @@ export async function getSelectedStuffs() {
     
 }
 
-async function filterRecipes(recipes, ing, ust, apl) {
-    // Filtrer les recettes qui contiennent les ingrédients, ustensiles, et appareils sélectionnés (si non vides)
-    const filteredRecipes = recipes.filter(recipe => 
-        // Vérifier si la recette contient tous les ingrédients sélectionnés (si le filtre des ingrédients n'est pas vide)
-        (Array.isArray(ing) && ing.length > 0 ? 
-            ing.every(filterIng =>
-                recipe.ingredients.some(e => 
-                    typeof e.ingredient === 'string' &&
-                    e.ingredient.toLowerCase().trim().includes(filterIng.toLowerCase().trim())
-                )
-            ) : true) &&
+// Affiche les éléments séléctionnés en fonction des recettes ainsi triées
+async function displayStuffs(stuffs, name) {
+    const e = [...new Set(stuffs)].sort((a, b) => a.localeCompare(b));
 
-        // Vérifier si la recette contient tous les ustensiles sélectionnés (si le filtre des ustensiles n'est pas vide)
-        (Array.isArray(ust) && ust.length > 0 ? 
-            ust.every(filterUst =>
-                recipe.ustensils.some(e => 
-                    typeof e === 'string' &&
-                    e.toLowerCase().trim().includes(filterUst.toLowerCase().trim())
-                )
-            ) : true) &&
+    const stuffsContainer = document.querySelector(`#${name}`);
+    let allStuffs = "";
 
-        // Vérifier si la recette contient l'appareil sélectionné (si le filtre des appareils n'est pas vide)
-        (Array.isArray(apl) && apl.length > 0 ? 
-            apl.every(filterApl =>
-                typeof recipe.appliance === 'string' &&
-                recipe.appliance.toLowerCase().trim().includes(filterApl.toLowerCase().trim())
-            ) : true)
+    e.forEach((stuff) => {
+        allStuffs += `
+        <option value="${stuff}">
+            ${stuff}
+        </option>
+        `
+    })
+
+    stuffsContainer.innerHTML = `<option value="" selected disabled>-- Choisir --</default>` + allStuffs ;
+}
+
+async function filterRecipes(recipes, ing = [], ust = [], apl = [], searchValue = "") {
+    // Filtrer les recettes qui contiennent les ingrédients, ustensiles, appareils et le texte de recherche
+    filteredRecipes = recipes.filter(recipe => 
+        // Filtrer par ingrédients
+        (ing.length === 0 || ing.every(filterIng =>
+            recipe.ingredients.some(e => 
+                e.ingredient.toLowerCase().includes(filterIng.toLowerCase())
+            )
+        )) &&
+        
+        // Filtrer par ustensiles
+        (ust.length === 0 || ust.every(filterUst =>
+            recipe.ustensils.some(e =>
+                e.toLowerCase().includes(filterUst.toLowerCase())
+            )
+        )) &&
+
+        // Filtrer par appareils
+        (apl.length === 0 || apl.every(filterApl =>
+            recipe.appliance.toLowerCase().includes(filterApl.toLowerCase())
+        )) &&
+
+        // Filtrer par recherche texte
+        (!searchValue || Object.values(recipe).some(value => 
+            value.toString().toLowerCase().includes(searchValue.toLowerCase())
+        ))
     );
 
     // Afficher les recettes filtrées
     console.log("Filtered recipes : ", filteredRecipes);
 
-    await displayStuffs(await getAllIngredients(filteredRecipes), "ingredients");
-    await displayStuffs(await getAllUstensils(filteredRecipes), "ustensils");
-    await displayStuffs(await getAllAppliances(filteredRecipes), "appliances");
-
-    // Retourner les recettes filtrées
-    await displayRecipes(filteredRecipes);
+    // Mettre à jour les données affichées
+    await updateDisplayedData(filteredRecipes);
+    return filteredRecipes;
 }
 
-export async function displaySelectedStuffs(stuffs) {
+async function displaySelectedStuffs(stuffs) {
     const selectedStuffsContainer = document.querySelector('.selected-list');
 
     let allSelectedStuffs = ""
@@ -97,35 +191,67 @@ export async function displaySelectedStuffs(stuffs) {
     removeSelectedStuffs();
 }
 
+async function research() {
+    searchValue = searchInput.value.trim().toLowerCase();
+    // Vérifier si la recherche est valide ou si des filtres sont activés
+    if (searchValue.length >= 3 || selectedStuffs.length > 0) {
+        console.log("Recherche active : ", searchValue);
+
+        // Appeler filterRecipes avec le texte de recherche et les filtres
+        await filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, searchValue);
+    } else if (searchValue.length === 0 && selectedStuffs.length > 0) {
+        // Si la recherche est vide mais des filtres sont sélectionnés
+        await filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, null);
+    } else if (searchValue.length === 0 && selectedStuffs.length === 0) {
+        // Si la recherche et les filtres sont vides, afficher toutes les recettes
+        await updateDisplayedData(recipes);
+        recipesList = recipes;
+        return recipesList;
+    }
+}
+
+searchInput.addEventListener('input', async () => {
+    await research();
+});
+
 
 
 async function removeSelectedStuffs() {
 
     const selectedItem = document.querySelectorAll(".selected-list-item");
-    console.log('remove stuffs : ',selectedStuffs);
+    console.log('remove stuffs : ', selectedStuffs);
 
-    let index = null;
-    
     selectedItem.forEach((e) => {
-        e.addEventListener('click', () => {
-            if (e.getAttribute('data-selector-type') === "Ingredients") {
-                index = selectedIngredients.indexOf(e);
-                selectedIngredients.splice(index, 1);
-                console.log('New list of Ingredients: ', selectedIngredients);
-            } else if (e.getAttribute('data-selector-type') === "Ustensils") {
-                index = selectedUstensils.indexOf(e);
-                selectedUstensils.splice(index, 1);
-                console.log('New list of Ustensils:', selectedUstensils);
-            } else if (e.getAttribute('data-selector-type') === "Appliances") {
-                index = selectedAppliances.indexOf(e);
-                selectedAppliances.splice(index, 1);
-                console.log('New list of Appliances:', selectedAppliances);
-            }
-            filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances);
-            e.style.display = "none";
-        })
-    })
+        e.addEventListener('click', async () => {
+            const type = e.getAttribute('data-selector-type');
+            const text = e.textContent.trim();
+            let selectedList;
 
+            // Déterminer la liste correcte en fonction du type
+            switch (type) {
+                case "Ingredients":
+                    selectedList = selectedIngredients;
+                    break;
+                case "Ustensils":
+                    selectedList = selectedUstensils;
+                    break;
+                case "Appliances":
+                    selectedList = selectedAppliances;
+                    break;
+            }
+
+            // Supprimer l'élément de la liste sélectionnée
+            const index = selectedList.indexOf(text);
+            if (index !== -1) selectedList.splice(index, 1);
+            console.log(`New list of ${type}:`, selectedList);
+
+            // Rafraîchir la liste des recettes en fonction des nouveaux critères
+            await research(); // Appeler research pour prendre en compte à la fois la recherche texte et les filtres
+
+            // Masquer l'élément sélectionné
+            e.style.display = "none";
+        });
+    });
 }
 
 async function init() {
