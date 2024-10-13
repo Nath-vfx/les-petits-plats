@@ -184,9 +184,6 @@ async function displaySelectedStuffs(stuffs) {
         `;
     })
 
-    console.log("All selected stuffs : ",allSelectedStuffs);
-    
-
     selectedStuffsContainer.innerHTML = allSelectedStuffs;
     removeSelectedStuffs();
 }
@@ -219,7 +216,6 @@ searchInput.addEventListener('input', async () => {
 async function removeSelectedStuffs() {
 
     const selectedItem = document.querySelectorAll(".selected-list-item");
-    console.log('remove stuffs : ', selectedStuffs);
 
     selectedItem.forEach((e) => {
         e.addEventListener('click', async () => {
