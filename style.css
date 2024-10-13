@@ -135,8 +135,7 @@ header .Site-logo {
     color: var(--black);
     font-family: "Manrope Variable", sans-serif;
     font-size: 16px;
-    justify-content: space-between;
-    width: 70%;
+    gap: 2rem;
 }
 
 ul {
@@ -147,6 +146,19 @@ ul {
     padding: 16px;
     border-radius: 10px;
     box-shadow: 0 0 8px rgba(0, 0, 0, .2);
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-button select {
+    background-color: #ECECEC;
+    border: none;
+    color: #1B1B1B;
+    width: 120px;
+}
+
+.selector-label {
+    text-transform: uppercase;
 }
 
 .filter-button ul {
@@ -163,17 +175,28 @@ ul {
 
 .selected-list {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
+    margin-bottom: 24px;
 }
 
 .selected-list-item {
     background-color: #FFD15B;
-    padding: .5rem;
+    padding: 18px;
     border-radius: 8px;
     color: #1B1B1B;
     font-family: "Manrope", sans-serif;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 60px;
+    text-transform: capitalize;
 }
 
+.selected-list-item-suppr {
+    width: 20px;
+    height: 20px;
+}
 
 
 /* Navbar */

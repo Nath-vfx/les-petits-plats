@@ -9,6 +9,11 @@ let filteredRecipes = [];
 const searchInput = document.querySelector("#searchbar");
 let searchValue = '';
 
+async function displayRecipesNumber(list) {
+    const recipeNumberPlace = document.querySelector(".assurance-title");
+    recipeNumberPlace.textContent = `${list.length} recettes`;
+} 
+
 // Récupères la list des ingrédients
 function getAllIngredients(recipesList) {
     const ingredients = [];
@@ -45,6 +50,7 @@ async function updateDisplayedData(list) {
     await displayStuffs(await getAllUstensils(list), "ustensils");
     await displayStuffs(await getAllAppliances(list), "appliances");
     await displayRecipes(list);
+    await displayRecipesNumber(list);
 }
 
 // Affiches l'ensemble des recettes
@@ -134,7 +140,7 @@ async function displayStuffs(stuffs, name) {
         `
     })
 
-    stuffsContainer.innerHTML = `<option value="" selected disabled>-- Choisir --</default>` + allStuffs ;
+    stuffsContainer.innerHTML = `<option class="selector-label" value="" selected disabled>${name.charAt(0).toUpperCase() + name.slice(1)}</default>` + allStuffs ;
 }
 
 async function filterRecipes(recipes, ing = [], ust = [], apl = [], searchValue = "") {
@@ -180,7 +186,9 @@ async function displaySelectedStuffs(stuffs) {
 
     stuffs.forEach((stuff) => {
         allSelectedStuffs += `
-        <li class="selected-list-item" data-selector-type="${stuff.type}">${stuff.name}</li>
+        <li class="selected-list-item" data-selector-type="${stuff.type}"><span>${stuff.name}</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" class="selected-list-item-suppr"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>
+        </li>
         `;
     })
 
@@ -214,11 +222,16 @@ searchInput.addEventListener('input', async () => {
 
 
 async function removeSelectedStuffs() {
+    const selectedItems = document.querySelectorAll(".selected-list-item");
 
-    const selectedItem = document.querySelectorAll(".selected-list-item");
+    selectedItems.forEach((e) => {
+        // Sélectionner l'élément SVG pour l'écouteur d'événements
+        const svgElement = e.querySelector('.selected-list-item-suppr');
+        
+        svgElement.addEventListener('click', async (event) => {
+            // Empêcher l'événement de propagation vers le parent li
+            event.stopPropagation();
 
-    selectedItem.forEach((e) => {
-        e.addEventListener('click', async () => {
             const type = e.getAttribute('data-selector-type');
             const text = e.textContent.trim();
             let selectedList;
@@ -256,6 +269,7 @@ async function init() {
     await displayStuffs(await getAllAppliances(recipesList), "appliances");
     await getSelectedStuffs();
     await displayRecipes(recipes);
+    await displayRecipesNumber(recipes);
 }
 
 init()
