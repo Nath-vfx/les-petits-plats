@@ -1,15 +1,14 @@
 import { recipes } from "./scripts/recipes.js";
 
-let selectedAppliances = [];
-let selectedUstensils = [];
-let selectedIngredients = [];
-let selectedStuffs = [];
+const selectedAppliances = [];
+const selectedUstensils = [];
+const selectedIngredients = [];
+let selectedFilters = [];
 let recipesList = recipes;
-let filteredRecipes = [];
 const searchInput = document.querySelector("#searchbar");
 let searchValue = '';
 
-async function displayRecipesNumber(list) {
+function displayRecipesNumber(list) {
     const recipeNumberPlace = document.querySelector(".assurance-title");
     recipeNumberPlace.textContent = `${list.length} recettes`;
 } 
@@ -45,16 +44,41 @@ function getAllAppliances(recipesList) {
     return appliances;
 }
 
-async function updateDisplayedData(list) {
-    await displayStuffs(await getAllIngredients(list), "ingredients");
-    await displayStuffs(await getAllUstensils(list), "ustensils");
-    await displayStuffs(await getAllAppliances(list), "appliances");
-    await displayRecipes(list);
-    await displayRecipesNumber(list);
+async function getSelectedFilters() {
+    const selector = document.querySelectorAll('select');
+
+    await selector.forEach((e) => {
+        e.addEventListener('change', () => {
+            const selectedItem = e.options[e.selectedIndex].text;
+            if (selectedItem !== "Ingredients" && selectedItem !== "Appliances" && selectedItem !== "Ustensils") {
+                if(e.id === 'ingredients' && !selectedIngredients.includes(selectedItem)) {
+                    selectedIngredients.push(e.options[e.selectedIndex].text);
+                    console.log('Selected ingredients : ', selectedIngredients);
+                } else if(e.id === 'ustensils' && !selectedUstensils.includes(selectedItem)) {
+                    selectedUstensils.push(e.options[e.selectedIndex].text);
+                    console.log('Selected ustensils : ', selectedUstensils);
+                } else if(e.id === 'appliances' && !selectedAppliances.includes(selectedItem)) {
+                    selectedAppliances.push(e.options[e.selectedIndex].text);
+                    console.log('Selected appliances : ', selectedAppliances);
+                }
+            }
+
+            filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, searchValue)
+            selectedFilters = [
+                ...selectedAppliances.map(item => ({ type: 'Appliances', name: item })),
+                ...selectedIngredients.map(item => ({ type: 'Ingredients', name: item })),
+                ...selectedUstensils.map(item => ({ type: 'Ustensils', name: item }))
+            ];
+            console.log("Selected stuffs : ", selectedFilters)
+            displaySelectedStuffs(selectedFilters);
+        })
+    })
 }
 
+
+
 // Affiches l'ensemble des recettes
-async function displayRecipes(list) {
+function displayRecipes(list) {
     const recipesContainer = document.querySelector(".recipes-container")
     let allRecipes = "";
 
@@ -91,42 +115,8 @@ async function displayRecipes(list) {
     recipesContainer.innerHTML = allRecipes;
 }
 
-
-
-
-// Récupère les filtres séléctionné
-async function getSelectedStuffs() {
-    const selector = document.querySelectorAll('select');
-
-    selector.forEach((e) => {
-        e.addEventListener('change', () => {
-            const selectedItem = e.options[e.selectedIndex].text;
-            if(e.id === 'ingredients' && !selectedIngredients.includes(selectedItem)) {
-                selectedIngredients.push(e.options[e.selectedIndex].text);
-                console.log('Selected ingredients : ', selectedIngredients);
-            } else if(e.id === 'ustensils' && !selectedUstensils.includes(selectedItem)) {
-                selectedUstensils.push(e.options[e.selectedIndex].text);
-                console.log('Selected ustensils : ', selectedUstensils);
-            } else if(e.id === 'appliances' && !selectedAppliances.includes(selectedItem)) {
-                selectedAppliances.push(e.options[e.selectedIndex].text);
-                console.log('Selected appliances : ', selectedAppliances);
-            }
-            filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, searchValue)
-            selectedStuffs = [
-                ...selectedAppliances.map(item => ({ type: 'Appliances', name: item })),
-                ...selectedIngredients.map(item => ({ type: 'Ingredients', name: item })),
-                ...selectedUstensils.map(item => ({ type: 'Ustensils', name: item }))
-            ];
-            console.log("Selected stuffs : ", selectedStuffs)
-            displaySelectedStuffs(selectedStuffs);
-        })
-    })
-
-    
-}
-
 // Affiche les éléments séléctionnés en fonction des recettes ainsi triées
-async function displayStuffs(stuffs, name) {
+function displayFilters(stuffs, name) {
     const e = [...new Set(stuffs)].sort((a, b) => a.localeCompare(b));
 
     const stuffsContainer = document.querySelector(`#${name}`);
@@ -145,7 +135,7 @@ async function displayStuffs(stuffs, name) {
 
 async function filterRecipes(recipes, ing = [], ust = [], apl = [], searchValue = "") {
     // Filtrer les recettes qui contiennent les ingrédients, ustensiles, appareils et le texte de recherche
-    filteredRecipes = recipes.filter(recipe => 
+    recipesList = recipes.filter(recipe =>
         // Filtrer par ingrédients
         (ing.length === 0 || ing.every(filterIng =>
             recipe.ingredients.some(e => 
@@ -172,11 +162,11 @@ async function filterRecipes(recipes, ing = [], ust = [], apl = [], searchValue 
     );
 
     // Afficher les recettes filtrées
-    console.log("Filtered recipes : ", filteredRecipes);
+    console.log("Filtered recipes : ", recipesList);
 
     // Mettre à jour les données affichées
-    await updateDisplayedData(filteredRecipes);
-    return filteredRecipes;
+    await updateDisplayedData(recipesList);
+    return recipesList;
 }
 
 async function displaySelectedStuffs(stuffs) {
@@ -193,35 +183,30 @@ async function displaySelectedStuffs(stuffs) {
     })
 
     selectedStuffsContainer.innerHTML = allSelectedStuffs;
-    removeSelectedStuffs();
+    await removeSelectedFilters();
 }
 
 async function research() {
     searchValue = searchInput.value.trim().toLowerCase();
-    // Vérifier si la recherche est valide ou si des filtres sont activés
-    if (searchValue.length >= 3 || selectedStuffs.length > 0) {
-        console.log("Recherche active : ", searchValue);
 
-        // Appeler filterRecipes avec le texte de recherche et les filtres
-        await filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, searchValue);
-    } else if (searchValue.length === 0 && selectedStuffs.length > 0) {
-        // Si la recherche est vide mais des filtres sont sélectionnés
-        await filterRecipes(recipesList, selectedIngredients, selectedUstensils, selectedAppliances, null);
-    } else if (searchValue.length === 0 && selectedStuffs.length === 0) {
-        // Si la recherche et les filtres sont vides, afficher toutes les recettes
-        await updateDisplayedData(recipes);
-        recipesList = recipes;
-        return recipesList;
+    // Si la recherche est active (>= 3 caractères) ou si des filtres sont actifs
+    if (searchValue.length >= 3) {
+            await filterRecipes(recipes, selectedIngredients, selectedUstensils, selectedAppliances, searchValue);
+    } else {
+        if (selectedFilters.length > 0) {
+            console.log("Recherche active ou filtres actifs : ", searchValue);
+
+            // Toujours filtrer à partir de la liste d'origine `recipesList`
+            await filterRecipes(recipes, selectedIngredients, selectedUstensils, selectedAppliances, "");
+        } else {
+            // Si aucune recherche et aucun filtre actif, afficher toutes les recettes
+            console.log("Aucune recherche ni filtre actif, affichage des recettes complètes.");
+            await updateDisplayedData(recipesList);
+        }
     }
 }
 
-searchInput.addEventListener('input', async () => {
-    await research();
-});
-
-
-
-async function removeSelectedStuffs() {
+async function removeSelectedFilters() {
     const selectedItems = document.querySelectorAll(".selected-list-item");
 
     selectedItems.forEach((e) => {
@@ -253,23 +238,37 @@ async function removeSelectedStuffs() {
             const index = selectedList.indexOf(text);
             if (index !== -1) selectedList.splice(index, 1);
             console.log(`New list of ${type}:`, selectedList);
+            await getSelectedFilters()
 
             // Rafraîchir la liste des recettes en fonction des nouveaux critères
             await research(); // Appeler research pour prendre en compte à la fois la recherche texte et les filtres
 
-            // Masquer l'élément sélectionné
+            // Masquer l'élément sélectionnédisplayFilters
             e.style.display = "none";
         });
     });
+
+}
+
+async function updateDisplayedData(list) {
+    await displayFilters(getAllIngredients(list), "ingredients");
+    await displayFilters(getAllUstensils(list), "ustensils");
+    await displayFilters(getAllAppliances(list), "appliances");
+    await displayRecipes(list);
+    await displayRecipesNumber(list);
 }
 
 async function init() {
-    await displayStuffs(await getAllIngredients(recipesList), "ingredients");
-    await displayStuffs(await getAllUstensils(recipesList), "ustensils");
-    await displayStuffs(await getAllAppliances(recipesList), "appliances");
-    await getSelectedStuffs();
+    await displayFilters(getAllIngredients(recipes), "ingredients");
+    await displayFilters(getAllUstensils(recipes), "ustensils");
+    await displayFilters(getAllAppliances(recipes), "appliances");
+    await getSelectedFilters();
     await displayRecipes(recipes);
     await displayRecipesNumber(recipes);
 }
 
-init()
+searchInput.addEventListener('input', async () => {
+    await research();
+});
+
+await init()
