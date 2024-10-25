@@ -16,33 +16,55 @@ function displayRecipesNumber(list) {
 // Récupères la list des ingrédients
 function getAllIngredients(recipesList) {
     const ingredients = [];
-    recipesList.forEach((recipe) => {
+    /*recipesList.forEach((recipe) => {
         recipe.ingredients.forEach((ingredient) => {
             ingredients.push(ingredient.ingredient.toLowerCase());
         });
     });
+    return ingredients;*/
+    for (let i = 0; i < recipesList.length; i++) {
+        const recipe = recipesList[i];
+        for (let j = 0; j < recipesList[i].ingredients.length; j++) {
+            const ingredient = recipe.ingredients[j];
+            ingredients.push(ingredient.ingredient.toLowerCase());
+        }
+    }
     return ingredients;
 }
 
 //récupère la liste des ustensils
 function getAllUstensils(recipesList) {
     const ustensils = [];
-    recipesList.forEach((recipe) => {
+    /*recipesList.forEach((recipe) => {
         recipe.ustensils.forEach((ustensil) => {
             ustensils.push(ustensil.toLowerCase());
         });
     });
+    return ustensils;*/
+    for (let i = 0; i < recipesList.length; i++) {
+        const recipe = recipesList[i];
+        for (let j = 0; j < recipesList[i].ustensils.length; j++) {
+            const ustensil = recipe.ustensils[j];
+            ustensils.push(ustensil.toLowerCase());
+        }
+    }
     return ustensils;
 }
 
 //Récupère la liste des appareils
 function getAllAppliances(recipesList) {
     const appliances = [];
-    recipesList.forEach((recipe) => {
+    /*recipesList.forEach((recipe) => {
         appliances.push(recipe.appliance.toLowerCase());
     });
+    return appliances;*/
+    for (let i = 0; i < recipesList.length; i++) {
+        const recipe = recipesList[i];
+        appliances.push(recipe.appliance.toLowerCase());
+    }
     return appliances;
 }
+
 
 async function getSelectedFilters() {
     const selector = document.querySelectorAll('select');
