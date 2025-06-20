@@ -1,6 +1,6 @@
 /**
  * Module recipes.js
- * Gestion des recettes : filtrage, recherche, extraction des listes uniques
+ * Gestion des recettes : filtrage, recherche, extraction des listes uniques
  */
 
 /**
@@ -10,43 +10,74 @@
  * @returns {Array} Recettes filtrées
  */
 export function getFilteredRecipes(recipes, filters) {
-  return recipes.filter(recipe => {
+  const filtered = [];
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[i];
+    let match = true;
+
     // 1. Filtre texte principal (dans nom, description ou ingrédients)
     if (filters.search && filters.search.length >= 3) {
       const search = filters.search.toLowerCase();
-      const inName = recipe.name.toLowerCase().includes(search);
-      const inDesc = recipe.description.toLowerCase().includes(search);
-      const inIngredients = recipe.ingredients.some(ing =>
-        ing.ingredient.toLowerCase().includes(search)
-      );
-      if (!(inName || inDesc || inIngredients)) return false;
+      const inName = recipe.name.toLowerCase().indexOf(search) !== -1;
+      const inDesc = recipe.description.toLowerCase().indexOf(search) !== -1;
+      let inIngredients = false;
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        if (
+          recipe.ingredients[j].ingredient.toLowerCase().indexOf(search) !== -1
+        ) {
+          inIngredients = true;
+          break;
+        }
+      }
+      if (!(inName || inDesc || inIngredients)) {
+        match = false;
+      }
     }
 
     // 2. Filtre ingrédients
-    if (filters.ingredients && filters.ingredients.length > 0) {
-      const recipeIngredients = recipe.ingredients.map(ing => ing.ingredient.toLowerCase());
-      const allPresent = filters.ingredients.every(f =>
-        recipeIngredients.includes(f.toLowerCase())
-      );
-      if (!allPresent) return false;
+    if (match && filters.ingredients && filters.ingredients.length > 0) {
+      const recipeIngredients = [];
+      for (let j = 0; j < recipe.ingredients.length; j++) {
+        recipeIngredients.push(recipe.ingredients[j].ingredient.toLowerCase());
+      }
+      for (let j = 0; j < filters.ingredients.length; j++) {
+        if (
+          recipeIngredients.indexOf(filters.ingredients[j].toLowerCase()) === -1
+        ) {
+          match = false;
+          break;
+        }
+      }
     }
 
     // 3. Filtre appareils
-    if (filters.appliances && filters.appliances.length > 0) {
-      if (!filters.appliances.includes(recipe.appliance.toLowerCase())) return false;
+    if (match && filters.appliances && filters.appliances.length > 0) {
+      if (filters.appliances.indexOf(recipe.appliance.toLowerCase()) === -1) {
+        match = false;
+      }
     }
 
     // 4. Filtre ustensiles
-    if (filters.ustensils && filters.ustensils.length > 0) {
-      const recipeUstensils = recipe.ustensils.map(u => u.toLowerCase());
-      const allPresent = filters.ustensils.every(f =>
-        recipeUstensils.includes(f.toLowerCase())
-      );
-      if (!allPresent) return false;
+    if (match && filters.ustensils && filters.ustensils.length > 0) {
+      const recipeUstensils = [];
+      for (let j = 0; j < recipe.ustensils.length; j++) {
+        recipeUstensils.push(recipe.ustensils[j].toLowerCase());
+      }
+      for (let j = 0; j < filters.ustensils.length; j++) {
+        if (
+          recipeUstensils.indexOf(filters.ustensils[j].toLowerCase()) === -1
+        ) {
+          match = false;
+          break;
+        }
+      }
     }
 
-    return true;
-  });
+    if (match) {
+      filtered.push(recipe);
+    }
+  }
+  return filtered;
 }
 
 /**
@@ -55,13 +86,20 @@ export function getFilteredRecipes(recipes, filters) {
  * @returns {Array} Ingrédients uniques (strings)
  */
 export function getAllIngredients(recipes) {
-  const set = new Set();
-  recipes.forEach(recipe => {
-    recipe.ingredients.forEach(ing => {
-      set.add(ing.ingredient.trim().toLowerCase());
-    });
-  });
-  return Array.from(set).sort();
+  const set = {};
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[i];
+    for (let j = 0; j < recipe.ingredients.length; j++) {
+      const ing = recipe.ingredients[j].ingredient.trim().toLowerCase();
+      set[ing] = true;
+    }
+  }
+  const result = [];
+  for (let key in set) {
+    result.push(key);
+  }
+  result.sort();
+  return result;
 }
 
 /**
@@ -70,13 +108,20 @@ export function getAllIngredients(recipes) {
  * @returns {Array} Ustensiles uniques (strings)
  */
 export function getAllUstensils(recipes) {
-  const set = new Set();
-  recipes.forEach(recipe => {
-    recipe.ustensils.forEach(ust => {
-      set.add(ust.trim().toLowerCase());
-    });
-  });
-  return Array.from(set).sort();
+  const set = {};
+  for (let i = 0; i < recipes.length; i++) {
+    const recipe = recipes[i];
+    for (let j = 0; j < recipe.ustensils.length; j++) {
+      const ust = recipe.ustensils[j].trim().toLowerCase();
+      set[ust] = true;
+    }
+  }
+  const result = [];
+  for (let key in set) {
+    result.push(key);
+  }
+  result.sort();
+  return result;
 }
 
 /**
@@ -85,9 +130,15 @@ export function getAllUstensils(recipes) {
  * @returns {Array} Appareils uniques (strings)
  */
 export function getAllAppliances(recipes) {
-  const set = new Set();
-  recipes.forEach(recipe => {
-    set.add(recipe.appliance.trim().toLowerCase());
-  });
-  return Array.from(set).sort();
+  const set = {};
+  for (let i = 0; i < recipes.length; i++) {
+    const appliance = recipes[i].appliance.trim().toLowerCase();
+    set[appliance] = true;
+  }
+  const result = [];
+  for (let key in set) {
+    result.push(key);
+  }
+  result.sort();
+  return result;
 }

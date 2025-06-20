@@ -7,7 +7,7 @@ let activeFilters = {
   ingredients: [],
   appliances: [],
   ustensils: [],
-  search: ''
+  search: "",
 };
 
 /**
@@ -16,8 +16,16 @@ let activeFilters = {
  * @param {string} value - Valeur du filtre à ajouter
  */
 export function addFilter(type, value) {
-  if (!activeFilters[type].includes(value.toLowerCase())) {
-    activeFilters[type].push(value.toLowerCase());
+  const val = value.toLowerCase();
+  let exists = false;
+  for (let i = 0; i < activeFilters[type].length; i++) {
+    if (activeFilters[type][i] === val) {
+      exists = true;
+      break;
+    }
+  }
+  if (!exists) {
+    activeFilters[type].push(val);
   }
 }
 
@@ -27,9 +35,14 @@ export function addFilter(type, value) {
  * @param {string} value - Valeur du filtre à retirer
  */
 export function removeFilter(type, value) {
-  activeFilters[type] = activeFilters[type].filter(
-    v => v !== value.toLowerCase()
-  );
+  const val = value.toLowerCase();
+  const newArr = [];
+  for (let i = 0; i < activeFilters[type].length; i++) {
+    if (activeFilters[type][i] !== val) {
+      newArr.push(activeFilters[type][i]);
+    }
+  }
+  activeFilters[type] = newArr;
 }
 
 /**
@@ -45,8 +58,27 @@ export function setSearchFilter(value) {
  * @returns {Object}
  */
 export function getActiveFilters() {
-  // On retourne une copie pour éviter les effets de bord
-  return JSON.parse(JSON.stringify(activeFilters));
+  // Copie profonde manuelle
+  const copy = {
+    ingredients: [],
+    appliances: [],
+    ustensils: [],
+    search: activeFilters.search,
+  };
+
+  for (let i = 0; i < activeFilters.ingredients.length; i++) {
+    copy.ingredients.push(activeFilters.ingredients[i]);
+  }
+
+  for (let i = 0; i < activeFilters.appliances.length; i++) {
+    copy.appliances.push(activeFilters.appliances[i]);
+  }
+
+  for (let i = 0; i < activeFilters.ustensils.length; i++) {
+    copy.ustensils.push(activeFilters.ustensils[i]);
+  }
+
+  return copy;
 }
 
 /**
@@ -57,6 +89,6 @@ export function resetFilters() {
     ingredients: [],
     appliances: [],
     ustensils: [],
-    search: ''
+    search: "",
   };
 }

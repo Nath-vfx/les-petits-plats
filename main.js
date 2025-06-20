@@ -72,7 +72,7 @@ function setupEventListeners() {
         const classes = li.className.split(" ");
         let type = null;
         for (let i = 0; i < classes.length; i++) {
-          if (classes[i].startsWith("tag-")) {
+          if (classes[i].indexOf("tag-") === 0) {
             type = classes[i].replace("tag-", "");
             break;
           }

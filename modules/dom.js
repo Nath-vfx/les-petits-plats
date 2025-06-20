@@ -12,6 +12,7 @@ export function renderRecipes(recipes) {
   const container = document.querySelector(".recipes-container");
   if (!container) return;
   container.innerHTML = "";
+
   if (recipes.length === 0) {
     const msg = document.createElement("div");
     msg.className = "no-recipes-message";
@@ -78,6 +79,7 @@ export function renderRecipes(recipes) {
       container.appendChild(card);
     }
   }
+
   // Afficher le nombre de recettes
   const title = document.querySelector(".assurance-title");
   if (title) title.textContent = recipes.length + " recettes";
@@ -133,6 +135,7 @@ export function renderSelectedTags(filters) {
   const tagsContainer = document.querySelector(".selected-list");
   if (!tagsContainer) return;
   tagsContainer.innerHTML = "";
+
   const types = ["ingredients", "appliances", "ustensils"];
   for (let t = 0; t < types.length; t++) {
     const type = types[t];
@@ -140,11 +143,13 @@ export function renderSelectedTags(filters) {
       const li = document.createElement("li");
       li.className = "selected-list-item tag-" + type;
       li.textContent = filters[type][i];
+
       // Ajout de la croix de suppression
       const close = document.createElement("span");
       close.className = "remove-tag";
       close.innerHTML = "&times;";
       li.appendChild(close);
+
       tagsContainer.appendChild(li);
     }
   }
