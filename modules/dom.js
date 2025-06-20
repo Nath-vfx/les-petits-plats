@@ -12,6 +12,7 @@ export function renderRecipes(recipes) {
   const container = document.querySelector(".recipes-container");
   if (!container) return;
   container.innerHTML = "";
+
   if (recipes.length === 0) {
     const msg = document.createElement("div");
     msg.className = "no-recipes-message";
@@ -32,52 +33,38 @@ export function renderRecipes(recipes) {
     `;
     container.appendChild(msg);
   } else {
-    for (let i = 0; i < recipes.length; i++) {
-      const recipe = recipes[i];
-      let ingredientsList = "";
-      for (let j = 0; j < recipe.ingredients.length; j++) {
-        const ing = recipe.ingredients[j];
-        let quantity = ing.quantity ? ing.quantity : "";
-        let unit = ing.unit ? " " + ing.unit : "";
-        ingredientsList +=
-          "<li><p>" +
-          ing.ingredient +
-          "</p><span>" +
-          quantity +
-          unit +
-          "</span></li>";
-      }
+    recipes.forEach((recipe) => {
+      const ingredientsList = recipe.ingredients
+        .map((ing) => {
+          const quantity = ing.quantity ? ing.quantity : "";
+          const unit = ing.unit ? " " + ing.unit : "";
+          return `<li><p>${ing.ingredient}</p><span>${quantity}${unit}</span></li>`;
+        })
+        .join("");
+
       const card = document.createElement("div");
       card.className = "recipe-card";
-      card.innerHTML =
-        '<div class="recipe-card-header">' +
-        '<img src="photos/' +
-        recipe.image +
-        '" alt="">' +
-        '<span class="recipe-time">' +
-        recipe.time +
-        " min</span>" +
-        "</div>" +
-        '<div class="recipe-card-content">' +
-        '<h3 class="recipe-title">' +
-        recipe.name +
-        "</h3>" +
-        '<div class="recipe-desc">' +
-        '<h4 class="recipe-desc-title">Recette</h4>' +
-        '<p class="recipe-desc-text">' +
-        recipe.description +
-        "</p>" +
-        "</div>" +
-        '<div class="recipe-ingredients">' +
-        '<h4 class="recipe-ingredient-title">Ingrédients</h4>' +
-        '<ul class="recipe-ingredients-list">' +
-        ingredientsList +
-        "</ul>" +
-        "</div>" +
-        "</div>";
+      card.innerHTML = `
+        <div class="recipe-card-header">
+          <img src="photos/${recipe.image}" alt="">
+          <span class="recipe-time">${recipe.time} min</span>
+        </div>
+        <div class="recipe-card-content">
+          <h3 class="recipe-title">${recipe.name}</h3>
+          <div class="recipe-desc">
+            <h4 class="recipe-desc-title">Recette</h4>
+            <p class="recipe-desc-text">${recipe.description}</p>
+          </div>
+          <div class="recipe-ingredients">
+            <h4 class="recipe-ingredient-title">Ingrédients</h4>
+            <ul class="recipe-ingredients-list">${ingredientsList}</ul>
+          </div>
+        </div>
+      `;
       container.appendChild(card);
-    }
+    });
   }
+
   // Afficher le nombre de recettes
   const title = document.querySelector(".assurance-title");
   if (title) title.textContent = recipes.length + " recettes";
@@ -97,32 +84,32 @@ export function renderFilters(recipes, filters) {
   // Ingrédients
   const ingredients = getAllIngredients(recipes);
   ingredientsSelect.innerHTML = '<option value="">Ingrédients</option>';
-  for (let i = 0; i < ingredients.length; i++) {
+  ingredients.forEach((ingredient) => {
     const opt = document.createElement("option");
-    opt.value = ingredients[i];
-    opt.textContent = ingredients[i];
+    opt.value = ingredient;
+    opt.textContent = ingredient;
     ingredientsSelect.appendChild(opt);
-  }
+  });
 
   // Appareils
   const appliances = getAllAppliances(recipes);
   appliancesSelect.innerHTML = '<option value="">Appareils</option>';
-  for (let i = 0; i < appliances.length; i++) {
+  appliances.forEach((appliance) => {
     const opt = document.createElement("option");
-    opt.value = appliances[i];
-    opt.textContent = appliances[i];
+    opt.value = appliance;
+    opt.textContent = appliance;
     appliancesSelect.appendChild(opt);
-  }
+  });
 
   // Ustensiles
   const ustensils = getAllUstensils(recipes);
   ustensilsSelect.innerHTML = '<option value="">Ustensiles</option>';
-  for (let i = 0; i < ustensils.length; i++) {
+  ustensils.forEach((ustensil) => {
     const opt = document.createElement("option");
-    opt.value = ustensils[i];
-    opt.textContent = ustensils[i];
+    opt.value = ustensil;
+    opt.textContent = ustensil;
     ustensilsSelect.appendChild(opt);
-  }
+  });
 }
 
 /**
@@ -133,19 +120,21 @@ export function renderSelectedTags(filters) {
   const tagsContainer = document.querySelector(".selected-list");
   if (!tagsContainer) return;
   tagsContainer.innerHTML = "";
+
   const types = ["ingredients", "appliances", "ustensils"];
-  for (let t = 0; t < types.length; t++) {
-    const type = types[t];
-    for (let i = 0; i < filters[type].length; i++) {
+  types.forEach((type) => {
+    filters[type].forEach((filterValue) => {
       const li = document.createElement("li");
-      li.className = "selected-list-item tag-" + type;
-      li.textContent = filters[type][i];
+      li.className = `selected-list-item tag-${type}`;
+      li.textContent = filterValue;
+
       // Ajout de la croix de suppression
       const close = document.createElement("span");
       close.className = "remove-tag";
       close.innerHTML = "&times;";
       li.appendChild(close);
+
       tagsContainer.appendChild(li);
-    }
-  }
+    });
+  });
 }

@@ -7,7 +7,7 @@ let activeFilters = {
   ingredients: [],
   appliances: [],
   ustensils: [],
-  search: ''
+  search: "",
 };
 
 /**
@@ -16,8 +16,9 @@ let activeFilters = {
  * @param {string} value - Valeur du filtre à ajouter
  */
 export function addFilter(type, value) {
-  if (!activeFilters[type].includes(value.toLowerCase())) {
-    activeFilters[type].push(value.toLowerCase());
+  const val = value.toLowerCase();
+  if (!activeFilters[type].includes(val)) {
+    activeFilters[type].push(val);
   }
 }
 
@@ -27,9 +28,8 @@ export function addFilter(type, value) {
  * @param {string} value - Valeur du filtre à retirer
  */
 export function removeFilter(type, value) {
-  activeFilters[type] = activeFilters[type].filter(
-    v => v !== value.toLowerCase()
-  );
+  const val = value.toLowerCase();
+  activeFilters[type] = activeFilters[type].filter((v) => v !== val);
 }
 
 /**
@@ -45,8 +45,13 @@ export function setSearchFilter(value) {
  * @returns {Object}
  */
 export function getActiveFilters() {
-  // On retourne une copie pour éviter les effets de bord
-  return JSON.parse(JSON.stringify(activeFilters));
+  // Copie profonde avec méthodes fonctionnelles
+  return {
+    ingredients: [...activeFilters.ingredients],
+    appliances: [...activeFilters.appliances],
+    ustensils: [...activeFilters.ustensils],
+    search: activeFilters.search,
+  };
 }
 
 /**
@@ -57,6 +62,6 @@ export function resetFilters() {
     ingredients: [],
     appliances: [],
     ustensils: [],
-    search: ''
+    search: "",
   };
 }

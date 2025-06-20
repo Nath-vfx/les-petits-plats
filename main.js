@@ -70,13 +70,9 @@ function setupEventListeners() {
       if (e.target && e.target.classList.contains("remove-tag")) {
         const li = e.target.parentNode;
         const classes = li.className.split(" ");
-        let type = null;
-        for (let i = 0; i < classes.length; i++) {
-          if (classes[i].startsWith("tag-")) {
-            type = classes[i].replace("tag-", "");
-            break;
-          }
-        }
+        const type = classes
+          .find((cls) => cls.startsWith("tag-"))
+          ?.replace("tag-", "");
         if (type) {
           removeFilter(type, li.firstChild.textContent);
           updateUI();
