@@ -8,17 +8,17 @@
 
     color-scheme: light dark;
     color: rgba(255, 255, 255, 0.87);
-    background-color: #ECECEC;
+    background-color: #ececec;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
-    --yellow: #FFD15B;
-    --black: #1B1B1B;
-    --white: #ECECEC;
-    --grey: #7A7A7A
+    --yellow: #ffd15b;
+    --black: #1b1b1b;
+    --white: #ececec;
+    --grey: #7a7a7a;
 }
 
 * {
@@ -26,7 +26,6 @@
     padding: 0;
     margin: 0;
 }
-
 
 h1 {
     font-family: "Anton", sans-serif;
@@ -41,7 +40,6 @@ h1 {
     height: 100vh;
     background: url("/photos/Recette18.webp") no-repeat center;
     background-size: cover;
-
 }
 
 .Back-filter {
@@ -99,7 +97,7 @@ header .Site-logo {
 }
 
 .searchbar button {
-    background-color: #1B1B1B;
+    background-color: #1b1b1b;
     color: var(--white);
     border: none;
     border-radius: 10px;
@@ -108,7 +106,6 @@ header .Site-logo {
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-
 }
 
 .page-content {
@@ -127,7 +124,6 @@ header .Site-logo {
     font-family: "Anton", sans-serif;
     font-size: 21px;
     color: var(--black);
-
 }
 
 .filters-selectors > ul {
@@ -145,15 +141,15 @@ ul {
 .filter-button {
     padding: 16px;
     border-radius: 10px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, .2);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
 }
 
 .filter-button select {
-    background-color: #ECECEC;
+    background-color: #ececec;
     border: none;
-    color: #1B1B1B;
+    color: #1b1b1b;
     width: 120px;
 }
 
@@ -181,10 +177,10 @@ ul {
 }
 
 .selected-list-item {
-    background-color: #FFD15B;
+    background-color: #ffd15b;
     padding: 18px;
     border-radius: 8px;
-    color: #1B1B1B;
+    color: #1b1b1b;
     font-family: "Manrope", sans-serif;
     display: flex;
     justify-content: space-between;
@@ -198,9 +194,22 @@ ul {
     height: 20px;
 }
 
-
 /* Navbar */
 /*ul {
+
+.no-recipes-message {
+  text-align: center;
+  color: #b00;
+  background: #fffbe6;
+  font-family: "Manrope", sans-serif;
+  font-size: 1.5em;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 2em 1em;
+  margin: 3em auto;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
     list-style-type: none;
 }
 
